@@ -1,2 +1,2 @@
 # TicTackToe
-Odin PProject TicTacToe
+Odin Project TicTacToe
