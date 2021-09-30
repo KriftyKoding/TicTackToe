@@ -16,6 +16,10 @@ header {
 
 }
 
+#player-indicator {
+    text-align: center;
+}
+
 .game-container {
     cursor: pointer;
     display: grid;
