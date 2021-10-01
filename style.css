@@ -1,7 +1,9 @@
-*, *::after, *::after {
+*,
+*::after,
+*::after {
     box-sizing: border-box;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  }
+}
 
 body {
     margin: 0;
@@ -9,24 +11,29 @@ body {
     background-color: plum;
 }
 
-header {
-   font-size: 7rem;
-   padding: 7vmin;
-   text-align: center;
-
+main {
+    background-color: powderblue;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 20% 7% 70%;
+    justify-items: center;
 }
 
-#player-indicator {
-    text-align: center;
+header {
+    align-self: center;
+    white-space: nowrap;
+    font-size: 7rem;
+}
+
+#player-indicator, #player-indicator button{
+    font-size: 2rem;
+    
 }
 
 .game-container {
+    align-self: start;
     cursor: pointer;
     display: grid;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     grid-template-columns: repeat(3, 17vmin);
     grid-template-rows: repeat(3, 17vmin);
 }
@@ -40,6 +47,6 @@ header {
     justify-content: center;
 }
 
-.game-square:hover{
+.game-square:hover {
     background-color: rgb(159, 52, 230);
 }
