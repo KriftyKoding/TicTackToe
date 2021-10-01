@@ -3,16 +3,16 @@ let gameStatus = (function () {
     let player2 = 'Player 2';
     let playerTurn = player1;
 
+    //Dom Elements
     let playerIndicator = document.getElementById("player-indicator").children[1]
     let startBTTN = document.getElementById("player-indicator").children[0]
 
     //bind
     pubsubs.on('validTurn', playerToggle)
     pubsubs.on('startBTTNClick', startGame)
-    
+
 
     function playerToggle() {
-        console.log("playerToggle");
         if (playerTurn == player1) {
             playerTurn = player2;
         } else if (playerTurn == player2) {
@@ -25,7 +25,8 @@ let gameStatus = (function () {
     }
 
     function changePlayerIndicator(indicator) {
-        playerIndicator.innerHTML = indicator
+        playerIndicator.innerHTML = indicator;
+        pubsubs.emit("playerChange", [playerTurn, player1, player2]);
     }
 
     function startGame() {
@@ -48,81 +49,70 @@ let gameStatus = (function () {
 
 let gameBoard = (function () {
     let validTurn = false;
-    let square = document.querySelectorAll(".game-square");
-    let gameStart = false;
+    let player
 
-    //bind pudsub
-    pubsubs.on('gameStart', gameStartToggle)
-    pubsubs.on('gameStart', clearAllSquare)
+    //Dom Element
+    let square = document.querySelectorAll(".game-square");
+
+    //Bind pudsub
+    pubsubs.on('gameStart', forEachSquare)
+    pubsubs.on("playerChange", changePlayer)
+
+    function changePlayer(newPlayer) {
+        if (newPlayer[0] == newPlayer[1]) {
+            player = "X"
+
+        } else if (newPlayer[0] == newPlayer[2]) {
+            player = "O"
+        } else {
+            console.error("gameBoard.changePlayer unexpected results");
+        }
+
+        console.log(player);
+    }
 
     function hover() {
-        console.log('hover');
+        // console.log('hover');
+        changeSquare(this, player);
+        hoverToggle(this);
     }
 
     function unhover() {
-        console.log('unhover');
+        hoverToggle(this);
+    }
+
+    function hoverToggle(element) {
+        element.classList.toggle("unhover")
+        element.classList.toggle("hover")
     }
 
     function click() {
-        console.log('click');
-        validTurnCheck();
-    }
+        let eClassList = this.classList
 
-    function gameStartToggle(indicator){
-        if (indicator == true) {
-            gameStart = true;
-        }else if(indicator == false) {
-            gameStart = false;
-        }else {
-            console.error("game stat indicator unexpected");
-            return;
+        if (eClassList.contains("validTurn")) {
+            eClassList.add('played');
+            eClassList.remove("validTurn");
+            pubsubs.emit('validTurn', true)
         }
     }
 
-    function clearSquare(squareElement) {
-        squareElement.innerHTML = ""
+    function changeSquare(squareElement, display) {
+        squareElement.innerHTML = display;
     }
 
-    function clearAllSquare(squareElement) {
+    function forEachSquare() {
         square.forEach((square) => {
-            clearSquare(square)
+            // clearSquare(square)
+            square.classList.add("unhover", "validTurn")
+            eventListener();
         });
     }
 
-    square.forEach((square) => {
-        square.addEventListener("mouseover", hover);
-        square.addEventListener("click", click);
-        square.addEventListener("mouseout", unhover);
-
-    });
-
-    function validTurnCheck() {
-        if (gameStart == false) {
-            console.log("game not yet started");
-        } else if (gameStart == true) {
-            pubsubs.emit('validTurn', true)
-            validTurnToggle();
-        } else {
-            console.error("validTurnCheck not expected")
-        }
+    function eventListener() {
+        square.forEach((square) => {
+            square.addEventListener("mouseover", hover);
+            square.addEventListener("click", click);
+            square.addEventListener("mouseout", unhover);
+        });
     }
-
-
-    function validTurnToggle() {
-        console.log("validTurnToggle");
-        if (validTurn == false) {
-            validTurn = false
-        } else if (validTurn == true) {
-            validTurn = false
-        } else {
-            console.error("validTurn not expected")
-            return;
-        }
-    }
-
-    // return {
-    //     clearAllSquare: clearAllSquare,
-    //     // gameStartToggle: gameStartToggle,
-
-    // }
 })();
