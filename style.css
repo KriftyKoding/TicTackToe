@@ -26,8 +26,12 @@ header {
 }
 
 #player-indicator, #player-indicator button{
-    font-size: 2rem;
-    
+    font-size: 2rem; 
+}
+
+.hide {
+    display: none;
+
 }
 
 .game-container {

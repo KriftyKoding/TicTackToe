@@ -3,13 +3,14 @@ let gameStatus = (function () {
     let player2 = 'Player 2';
     let playerTurn = player1;
 
-    let playerIndicator = document.getElementById("player-indicator")
+    let playerIndicator = document.getElementById("player-indicator").children[1]
+    let startBTTN = document.getElementById("player-indicator").children[0]
 
     //bind
     pubsubs.on('validTurn', playerToggle)
     pubsubs.on('startBTTNClick', startGame)
     
-    
+
     function playerToggle() {
         console.log("playerToggle");
         if (playerTurn == player1) {
@@ -20,18 +21,25 @@ let gameStatus = (function () {
             console.error("player not expected");
             return;
         }
-        changePlayerIndicator();
+        changePlayerIndicator(playerTurn);
     }
 
-    function changePlayerIndicator() {
-        playerIndicator.innerHTML = playerTurn
+    function changePlayerIndicator(indicator) {
+        playerIndicator.innerHTML = indicator
     }
 
     function startGame() {
         console.log("start game");
         playerTurn = player1;
         pubsubs.emit('gameStart', true)
-        changePlayerIndicator();
+        changePlayerIndicator(playerTurn);
+        hideToggle();
+    }
+
+    function hideToggle() {
+        playerIndicator.classList.toggle("hide");
+        startBTTN.classList.toggle("hide");
+
     }
 })();
 
