@@ -1,7 +1,20 @@
 let gameStatus = (function () {
-    let player1 = 'Player 1';
-    let player2 = 'Player 2';
-    let playerTurn = player1;
+    //player objects
+    let player = {
+        create: function(name, symbol, score) {
+            let instance = Object.create(this);
+            instance.name = name;
+            instance.symbol = symbol;
+            instance.score = score;
+            return instance;
+        }
+    }
+    
+
+    let player1 = player.create("Player 1", "X", 0)
+    let player2 = player.create("Player 2", "O", 0)
+    let playerTurn = (player1.name.name);
+    // console.log(player1.name);
 
     //Dom Elements
     let playerIndicator = document.getElementById("player-indicator").children[1]
@@ -22,11 +35,11 @@ let gameStatus = (function () {
             return;
         }
         changePlayerIndicator(playerTurn);
+        pubsubs.emit("playerChange", playerTurn);
     }
 
     function changePlayerIndicator(indicator) {
-        playerIndicator.innerHTML = indicator;
-        pubsubs.emit("playerChange", [playerTurn, player1, player2]);
+        playerIndicator.innerHTML = indicator.name;
     }
 
     function startGame() {
@@ -34,6 +47,7 @@ let gameStatus = (function () {
         playerTurn = player1;
         pubsubs.emit('gameStart', true)
         changePlayerIndicator(playerTurn);
+        pubsubs.emit("playerChange", playerTurn);
         hideToggle();
     }
 
@@ -48,59 +62,50 @@ let gameStatus = (function () {
 
 
 let gameBoard = (function () {
-    let validTurn = false;
     let player
 
     //Dom Element
     let square = document.querySelectorAll(".game-square");
 
     //Bind pudsub
-    pubsubs.on('gameStart', forEachSquare)
+    pubsubs.on('gameStart', startGame)
     pubsubs.on("playerChange", changePlayer)
 
     function changePlayer(newPlayer) {
-        if (newPlayer[0] == newPlayer[1]) {
-            player = "X"
-
-        } else if (newPlayer[0] == newPlayer[2]) {
-            player = "O"
-        } else {
-            console.error("gameBoard.changePlayer unexpected results");
-        }
-
-        console.log(player);
+        player = newPlayer.symbol;
     }
 
     function hover() {
         // console.log('hover');
-        changeSquare(this, player);
+        changeSquareDisplay(this, player);
         hoverToggle(this);
     }
-
+    
     function unhover() {
         hoverToggle(this);
     }
-
+    
     function hoverToggle(element) {
         element.classList.toggle("unhover")
         element.classList.toggle("hover")
     }
-
+    
     function click() {
         let eClassList = this.classList
-
+        
         if (eClassList.contains("validTurn")) {
             eClassList.add('played');
             eClassList.remove("validTurn");
-            pubsubs.emit('validTurn', true)
+            pubsubs.emit('validTurn', true);
+            this.removeEventListener("mouseover", hover);
         }
     }
 
-    function changeSquare(squareElement, display) {
+    function changeSquareDisplay(squareElement, display) {
         squareElement.innerHTML = display;
     }
 
-    function forEachSquare() {
+    function startGame() {
         square.forEach((square) => {
             // clearSquare(square)
             square.classList.add("unhover", "validTurn")

@@ -1,14 +1,25 @@
 # TicTackToe
 Odin Project TicTacToe
 
-- event listeners only work once game is started
-- hover/unhover class toggle
-- unhover class start at begging of game
-- player change.emit created
-- changePlayer() calcs if 'x' or 'o'
-- unused function Delete
--- vailTurnCheck
--- validTurnToggle
--- gameStartToggle and Element
+need to do
+-put player in object (missed this)
+
+-check if win
+-player - input names
+-start/restart 
+-display element that congratulates winner
+
+
+Current
+Player now and Object
+-put player in object (missed this) and fix function so the work with object
+bug fix 
+-hover change to current player
+minor 
+-change location of pubsubs.emit('playerChange'
+
+
+Look at 
+-combine hover and unhover into same function;
 
 
