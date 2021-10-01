@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,12 +10,13 @@
 <link rel="stylesheet" href="style.css">
 <script src="pubsub.js" ></script>
 <script src="script.js" defer></script>
+
 <body>
-    <header>Tic Tac Toe</header>
     <main>
-       <section id="player-indicator">
-           <button>Start Game</button>
-       </section>
+        <header>Tic Tac Toe</header>
+        <section id="player-indicator">
+            <button onclick="pubsubs.emit('startBTTNClick', 1)">Start Game</button>
+        </section>
         <section class="game-container">
             <button id="square1" class="game-square">X</button>
             <button id="square2" class="game-square">O</button>
@@ -28,4 +30,5 @@
         </section>
     </main>
 </body>
+
 </html>

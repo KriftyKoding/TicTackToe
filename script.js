@@ -4,13 +4,12 @@ let gameStatus = (function () {
     let playerTurn = player1;
 
     let playerIndicator = document.getElementById("player-indicator")
-    //  ///////////////////////// MATT //////////////////////////////////////
-    function startBTTN() {
-        playerIndicator.children[0].addEventListener("click", () => {
-        startGame();
-        console.log("blah");
-    });}
 
+    //bind
+    pubsubs.on('validTurn', playerToggle)
+    pubsubs.on('startBTTNClick', startGame)
+    
+    
     function playerToggle() {
         console.log("playerToggle");
         if (playerTurn == player1) {
@@ -31,25 +30,22 @@ let gameStatus = (function () {
     function startGame() {
         console.log("start game");
         playerTurn = player1;
-        gameBoard.gameStartToggle(true);
+        pubsubs.emit('gameStart', true)
         changePlayerIndicator();
-
-        gameBoard.clearAllSquare();
-    }
-
-    return {
-        startBTTN: startBTTN,
-        // startGame: startGame,
-        playerToggle: playerToggle,
     }
 })();
-gameStatus.startBTTN();
+
+
 
 
 let gameBoard = (function () {
     let validTurn = false;
     let square = document.querySelectorAll(".game-square");
     let gameStart = false;
+
+    //bind pudsub
+    pubsubs.on('gameStart', gameStartToggle)
+    pubsubs.on('gameStart', clearAllSquare)
 
     function hover() {
         console.log('hover');
@@ -96,6 +92,7 @@ let gameBoard = (function () {
         if (gameStart == false) {
             console.log("game not yet started");
         } else if (gameStart == true) {
+            pubsubs.emit('validTurn', true)
             validTurnToggle();
         } else {
             console.error("validTurnCheck not expected")
@@ -113,12 +110,11 @@ let gameBoard = (function () {
             console.error("validTurn not expected")
             return;
         }
-        gameStatus.playerToggle();
     }
 
-    return {
-        clearAllSquare: clearAllSquare,
-        gameStartToggle: gameStartToggle,
+    // return {
+    //     clearAllSquare: clearAllSquare,
+    //     // gameStartToggle: gameStartToggle,
 
-    }
+    // }
 })();

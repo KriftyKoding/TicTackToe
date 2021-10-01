@@ -2,4 +2,5 @@
 Odin Project TicTacToe
 
 
-- modulars
+- pudsub.js added and used
+- add onclick instead of eventlistener
