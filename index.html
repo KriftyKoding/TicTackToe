@@ -15,13 +15,13 @@
     <main>
         <header>Tic Tac Toe</header>
         <section id="player-indicator">
-            <button onclick="pubsubs.emit('playGame', 1)">Play Game</button>
+            <button onclick="pubsubs.emit('playGame', 'X')">Play Game</button>
             <div  class="hide" >Player 1</div>
             <!-- <form class="hide"> -->
-            <form class="hide" action="javascript:pubsubs.emit('startBTTNClick', 1)">
+            <form class="hide" action="javascript:pubsubs.emit('startBTTNClick', 'X')">
             <!-- <form class="hide" action="javascript:test()"> -->
-                <input type="text" name="Player1" id="" placeholder="Player One" required>
-                <input type="text" name="Player2" id="" placeholder="Player Two" required>
+                <input type="text" name="Player1" id="" value="Player One" required>
+                <input type="text" name="Player2" id="" value="Player Two" required>
                 <button type="submit" >Start Game</button>
                 <!-- <input type="button" value="Start Game" onclick="test(this)"> -->
                 <!-- <input id="submit" type="submit" onclick="test(this)" > -->
