@@ -1,3 +1,14 @@
+function test() {
+    console.log("test")
+    let formDom = document.getElementById("player-indicator").children[2]
+    let player1 = formDom.children[0].value
+    let player2 = formDom.children[1].value
+
+    console.log(player1);
+    
+}
+
+
 let gameStatus = (function () {
     //player objects
     let player = {
@@ -18,12 +29,19 @@ let gameStatus = (function () {
 
     //Dom Elements
     let playerIndicator = document.getElementById("player-indicator").children[1]
-    let startBTTN = document.getElementById("player-indicator").children[0]
+    let useInputForm = document.getElementById("player-indicator").children[2]
+    let playGameBTTN = document.getElementById("player-indicator").children[0]
+    
 
     //bind
     pubsubs.on('validTurn', playerToggle)
     pubsubs.on('startBTTNClick', startGame)
+    pubsubs.on("playGame", playGame)
 
+    function playGame() {
+        hideToggle(playGameBTTN);
+        hideToggle(useInputForm);
+    }
 
     function playerToggle() {
         if (playerTurn == player1) {
@@ -42,19 +60,21 @@ let gameStatus = (function () {
         playerIndicator.innerHTML = indicator.name;
     }
 
-    function startGame() {
-        console.log("start game");
+    function startGame(event) {
+        player1.name = useInputForm.children[0].value;
+        player2.name = useInputForm.children[1].value;
         playerTurn = player1;
         pubsubs.emit('gameStart', true)
         changePlayerIndicator(playerTurn);
         pubsubs.emit("playerChange", playerTurn);
-        hideToggle();
+        hideToggle(useInputForm);
+        hideToggle(playerIndicator);
+        
     }
 
-    function hideToggle() {
-        playerIndicator.classList.toggle("hide");
-        startBTTN.classList.toggle("hide");
-
+    function hideToggle(element) {
+// console.log(element);
+        element.classList.toggle("hide");
     }
 })();
 
