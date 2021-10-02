@@ -17,16 +17,12 @@
         <section id="player-indicator">
             <button onclick="pubsubs.emit('playGame', 'X')">Play Game</button>
             <div  class="hide" >Player 1</div>
-            <!-- <form class="hide"> -->
             <form class="hide" action="javascript:pubsubs.emit('startBTTNClick', 'X')">
-            <!-- <form class="hide" action="javascript:test()"> -->
-                <input type="text" name="Player1" id="" value="Player One" required>
-                <input type="text" name="Player2" id="" value="Player Two" required>
+                <input type="text" name="Player1" id="" value="Player 1" required>
+                <input type="text" name="Player2" id="" value="Player 2" required>
                 <button type="submit" >Start Game</button>
-                <!-- <input type="button" value="Start Game" onclick="test(this)"> -->
-                <!-- <input id="submit" type="submit" onclick="test(this)" > -->
-                <!-- <input id="submit" type="submit" onclick="test();"> -->
             </form>
+            <input type="button" class="hide" value="Restart Match" onclick="restart()">
         </section>
         <section class="game-container">
             <button id="square1" class="game-square">X</button>

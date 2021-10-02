@@ -2,8 +2,8 @@ function restart() {
     location.reload();
 }
 
-
 let gameStatus = (function () {
+
     //player objects
     let player = {
         create: function (name, symbol, score) {
@@ -14,12 +14,10 @@ let gameStatus = (function () {
             return instance;
         }
     }
-
-
     let player1 = player.create("Player", "X", 0)
     let player2 = player.create("Player", "O", 0)
     let playerTurn = (player1.name);
-    // console.log(player1.name);
+
 
     //Dom Elements
     let playerIndicatorContainer = document.getElementById("player-indicator");
@@ -29,16 +27,27 @@ let gameStatus = (function () {
     let restart = playerIndicatorContainer.children[3]
 
 
-    //bind
-    pubsubs.on('validTurn', playerToggle)
-    pubsubs.on('startBTTNClick', startGame)
-    pubsubs.on("playGame", playGame)
-    pubsubs.on("victory", winCalculator)
-    // pubsubs.on("newGame", startGame)
+    //pubsubs.on
+    pubsubs.on('validTurn', playerToggle);
+    pubsubs.on('startBTTNClick', startGame);
+    pubsubs.on("playGame", playGame);
+    pubsubs.on("victory", winCalculator);
 
     function playGame() {
-        hideToggle(playGameBTTN);
-        hideToggle(useInputForm);
+        addHideClass(playGameBTTN);
+        removeHideClass(useInputForm);
+    }
+
+    function startGame(playerSymbol) {
+        player1.name = useInputForm.children[0].value;
+        player2.name = useInputForm.children[1].value;
+        playerTurnCalc();
+        changePlayerIndicator(playerTurn);
+        addHideClass(useInputForm);
+        removeHideClass(playerIndicator);
+        removeHideClass(restart);
+        pubsubs.emit('gameStart', true);
+        pubsubs.emit("playerChange", playerTurn);
     }
 
     function playerToggle() {
@@ -58,18 +67,6 @@ let gameStatus = (function () {
         playerIndicator.innerHTML = indicator.name + ` (${indicator.symbol})`;
     }
 
-    function startGame(playerSymbol) {
-        player1.name = useInputForm.children[0].value;
-        player2.name = useInputForm.children[1].value;
-        playerTurnCalc();
-        changePlayerIndicator(playerTurn);
-        addHideClass(useInputForm);
-        removeHideClass(playerIndicator);
-        removeHideClass(restart);
-        pubsubs.emit('gameStart', true);
-        pubsubs.emit("playerChange", playerTurn);
-        // winCalculator(playerSymbol);
-    }
 
     function playerTurnCalc() {
         let indicator = Math.ceil(Math.random() * 2);
@@ -81,10 +78,6 @@ let gameStatus = (function () {
         } else {
             console.error("gameStatus.playerTurnCalc");
         }
-    }
-
-    function hideToggle(element) {
-        element.classList.toggle("hide");
     }
 
     function addHideClass(element) {
@@ -108,14 +101,11 @@ let gameStatus = (function () {
             console.error("#gameStatus.winCalculator");
         }
 
-
         let playerArray = {
             player1: player1,
             player2: player2,
         }
-
         pubsubs.emit("winUpdate", playerArray)
-
     }
 })();
 
@@ -141,53 +131,17 @@ let gameBoard = (function () {
         player2 = playerArray.player2;
     }
 
-
     function changePlayer(newPlayer) {
         player = newPlayer.symbol;
     }
-
-    function hover() {
-        // console.log('hover');
-        changeSquareDisplay(this, player);
-        addHoverClass(this);
-    }
-
-    function unhover() {
-        removeHoverClass(this);
-    }
-
-    function addHoverClass(element) {
-        element.classList.add("unhover");
-    }
-
-    function removeHoverClass (element) {
-        element.classList.add("unhover");
-    }
-
-    function click() {
-        let eClassList = this.classList
-
-        if (eClassList.contains("validTurn")) {
-            this.removeEventListener("mouseover", hover);
-            this.removeEventListener("mouseout", unhover);
-            eClassList.remove("validTurn", "hover");
-            winCheck();
-            pubsubs.emit('validTurn', true);
-        }
-    }
-
-    function changeSquareDisplay(squareElement, display) {
-        squareElement.innerHTML = display;
-    }
-
+    
     function startGame() {
         square.forEach((square) => {
-            square.classList.add("unhover", "validTurn")
-            square.classList.remove("hover")
+            square.classList.add("validTurn")
             eventListener();
         });
     }
-
+    
     function eventListener() {
         square.forEach((square) => {
             square.addEventListener("mouseover", hover);
@@ -195,13 +149,32 @@ let gameBoard = (function () {
             square.addEventListener("mouseout", unhover);
         });
     }
+    
+    function hover() {
+        this.innerHTML = player;
+        this.classList.add("hover");
+    }
 
+    function unhover() {
+        this.classList.remove("hover")
+    }
+
+    function click() {
+        let eClassList = this.classList
+
+        if (eClassList.contains("validTurn")) {
+            this.removeEventListener("mouseover", hover);
+            eClassList.remove("validTurn", "hover");
+            winCheck();
+            pubsubs.emit('validTurn', true);
+        }
+    }
+    
     function winCheck() {
         let cubeContainer = []
         let cube = {
-            create: function (name, validIndicator, playerMark) {
+            create: function (validIndicator, playerMark) {
                 var instance = Object.create(this);
-                instance.name = name;
                 instance.validIndicator = validIndicator;
                 instance.playerMark = playerMark;
                 return instance;
@@ -209,14 +182,14 @@ let gameBoard = (function () {
         }
 
         for (let i = 0; i < square.length; i++) {
-            let cubeObject = cube.create(i, !(square[i].classList.contains("validTurn")), (square[i].innerHTML));
+            let cubeObject = cube.create(!(square[i].classList.contains("validTurn")), (square[i].innerHTML));
             cubeContainer.push(cubeObject);
         }
-
+        //if square had been played and it matches current player
         function squareToCheck(num) {
             return (cubeContainer[num].validIndicator && cubeContainer[num].playerMark == player);
         }
-
+        //three in a row check
         //1st square/1row 
         if (squareToCheck(0)) {
             //straight across
@@ -291,11 +264,12 @@ let gameBoard = (function () {
         }
     }
 
+
     function gameOver(result) {
         if (result == "TIE!!!!") {
             alert(`Tie!!!`);
         } else if (result == "victory") {
-            
+
             pubsubs.emit("victory", player)
 
             if (player == player1.symbol) {
@@ -311,8 +285,4 @@ let gameBoard = (function () {
 
         pubsubs.emit("startBTTNClick", player)
     }
-
-
-
-
 })();

@@ -15,7 +15,7 @@ main {
     background-color: powderblue;
     height: 100vh;
     display: grid;
-    grid-template-rows: 20% 7% 70%;
+    grid-template-rows: 20% 17% 70%;
     justify-items: center;
 }
 
@@ -44,7 +44,7 @@ header {
 .game-square {
     border-style: solid;
     background-color: blue;
-    /* color: blue; */
+    color: black;
     font-size: 3.5rem;
     font-weight: bolder;
     align-content: center;
@@ -55,14 +55,12 @@ header {
     background-color: rgb(159, 52, 230);
 }
 
+.validTurn{
+    color: blue;
+}
+
 .hover {
     color: grey;
 }
 
-.unhover {
-    color: blue;
-}
 
-.played {
-    color: black;
-}

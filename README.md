@@ -2,24 +2,26 @@
 Odin Project TicTacToe
 
 need to do
--put player in object (missed this)
+- restart BTTN????
+? score board
+- min max font (header)
+- change alert ??? somehow
+--- in score board or to pop up
+- user input look better
 
--check if win
--player - input names
--start/restart 
--display element that congratulates winner
+- phone version
+- cross browser support
+
+
+
+
 
 
 Current
-Player now and Object
--put player in object (missed this) and fix function so the work with object
-bug fix 
--hover change to current player
-minor 
--change location of pubsubs.emit('playerChange'
+
 
 
 Look at 
--combine hover and unhover into same function;
+
 
 
