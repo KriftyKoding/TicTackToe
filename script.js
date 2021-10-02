@@ -1,12 +1,12 @@
-function test() {
-    console.log("test")
-    let formDom = document.getElementById("player-indicator").children[2]
-    let player1 = formDom.children[0].value
-    let player2 = formDom.children[1].value
+// function test() {
+//     console.log("test")
+//     let formDom = document.getElementById("player-indicator").children[2]
+//     let player1 = formDom.children[0].value
+//     let player2 = formDom.children[1].value
 
-    console.log(player1);
+//     console.log(player1);
     
-}
+// }
 
 
 let gameStatus = (function () {
@@ -37,6 +37,7 @@ let gameStatus = (function () {
     pubsubs.on('validTurn', playerToggle)
     pubsubs.on('startBTTNClick', startGame)
     pubsubs.on("playGame", playGame)
+    // pubsubs.on("newGame", startGame)
 
     function playGame() {
         hideToggle(playGameBTTN);
@@ -57,24 +58,43 @@ let gameStatus = (function () {
     }
 
     function changePlayerIndicator(indicator) {
-        playerIndicator.innerHTML = indicator.name;
+        playerIndicator.innerHTML = indicator.name + ` (${indicator.symbol})`;
     }
 
     function startGame(event) {
         player1.name = useInputForm.children[0].value;
         player2.name = useInputForm.children[1].value;
-        playerTurn = player1;
-        pubsubs.emit('gameStart', true)
+        playerTurnCalc();
+        pubsubs.emit('gameStart', true);
         changePlayerIndicator(playerTurn);
         pubsubs.emit("playerChange", playerTurn);
-        hideToggle(useInputForm);
-        hideToggle(playerIndicator);
+        addHideClass(useInputForm);
+        removeHideClass(playerIndicator);
         
+    }
+    
+    function playerTurnCalc() {
+        let indicator = Math.ceil(Math.random() * 2);
+        
+        if (indicator == 1) {
+            playerTurn = player1
+        } else if (indicator == 2) {
+            playerTurn = player2
+        } else {
+            console.error("gameStatus.playerTurnCalc");
+        }
     }
 
     function hideToggle(element) {
-// console.log(element);
         element.classList.toggle("hide");
+    }
+
+    function addHideClass(element){
+        element.classList.add("hide");
+    }
+
+    function removeHideClass (element) {
+        element.classList.remove("hide");
     }
 })();
 
@@ -130,6 +150,7 @@ let gameBoard = (function () {
         square.forEach((square) => {
             // clearSquare(square)
             square.classList.add("unhover", "validTurn")
+            square.classList.remove("played")
             eventListener();
         });
     }
@@ -247,6 +268,12 @@ let gameBoard = (function () {
             console.error("ERROR gameBoard.winCheck.gameOver ERROR");
         }
 
+        pubsubs.emit("startBTTNClick", true)
+
+
+
     }
 
 })();
+
+let NextPlayer = Math.ceil(Math.random() * 2);
