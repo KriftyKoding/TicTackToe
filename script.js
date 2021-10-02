@@ -1,12 +1,6 @@
-// function test() {
-//     console.log("test")
-//     let formDom = document.getElementById("player-indicator").children[2]
-//     let player1 = formDom.children[0].value
-//     let player2 = formDom.children[1].value
-
-//     console.log(player1);
-
-// }
+function restart() {
+    location.reload();
+}
 
 
 let gameStatus = (function () {
@@ -28,9 +22,11 @@ let gameStatus = (function () {
     // console.log(player1.name);
 
     //Dom Elements
-    let playerIndicator = document.getElementById("player-indicator").children[1]
-    let useInputForm = document.getElementById("player-indicator").children[2]
-    let playGameBTTN = document.getElementById("player-indicator").children[0]
+    let playerIndicatorContainer = document.getElementById("player-indicator");
+    let playerIndicator = playerIndicatorContainer.children[1]
+    let useInputForm = playerIndicatorContainer.children[2]
+    let playGameBTTN = playerIndicatorContainer.children[0]
+    let restart = playerIndicatorContainer.children[3]
 
 
     //bind
@@ -66,11 +62,12 @@ let gameStatus = (function () {
         player1.name = useInputForm.children[0].value;
         player2.name = useInputForm.children[1].value;
         playerTurnCalc();
-        pubsubs.emit('gameStart', true);
         changePlayerIndicator(playerTurn);
-        pubsubs.emit("playerChange", playerTurn);
         addHideClass(useInputForm);
         removeHideClass(playerIndicator);
+        removeHideClass(restart);
+        pubsubs.emit('gameStart', true);
+        pubsubs.emit("playerChange", playerTurn);
         // winCalculator(playerSymbol);
     }
 
@@ -117,7 +114,7 @@ let gameStatus = (function () {
             player2: player2,
         }
 
-        pubsubs.emit("playerWins", playerArray)
+        pubsubs.emit("winUpdate", playerArray)
 
     }
 })();
@@ -136,7 +133,7 @@ let gameBoard = (function () {
     //Bind pudsub
     pubsubs.on('gameStart', startGame)
     pubsubs.on("playerChange", changePlayer)
-    pubsubs.on("playerWins", winUpdate)
+    pubsubs.on("winUpdate", winUpdate)
 
     function winUpdate(playerArray) {
         console.log(playerArray.player1);
@@ -152,26 +149,30 @@ let gameBoard = (function () {
     function hover() {
         // console.log('hover');
         changeSquareDisplay(this, player);
-        hoverToggle(this);
+        addHoverClass(this);
     }
 
     function unhover() {
-        hoverToggle(this);
+        removeHoverClass(this);
     }
 
-    function hoverToggle(element) {
-        element.classList.toggle("unhover")
-        element.classList.toggle("hover")
+    function addHoverClass(element) {
+        element.classList.add("unhover");
+    }
+
+    function removeHoverClass (element) {
+        element.classList.add("unhover");
     }
 
     function click() {
         let eClassList = this.classList
 
         if (eClassList.contains("validTurn")) {
-            eClassList.remove("validTurn");
+            this.removeEventListener("mouseover", hover);
+            this.removeEventListener("mouseout", unhover);
+            eClassList.remove("validTurn", "hover");
             winCheck();
             pubsubs.emit('validTurn', true);
-            this.removeEventListener("mouseover", hover);
         }
     }
 
@@ -182,6 +183,7 @@ let gameBoard = (function () {
     function startGame() {
         square.forEach((square) => {
             square.classList.add("unhover", "validTurn")
+            square.classList.remove("hover")
             eventListener();
         });
     }
