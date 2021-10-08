@@ -38,7 +38,7 @@ let gameStatus = (function () {
         removeHideClass(useInputForm);
     }
 
-    function startGame(playerSymbol) {
+    function startGame() {
         player1.name = useInputForm.children[0].value;
         player2.name = useInputForm.children[1].value;
         playerTurnCalc();
